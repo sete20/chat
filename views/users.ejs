@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+</head>
+<body>
+<button class="open-button" onclick="openForm()">Chat</button>
+
+<div class="chat-popup" id="myForm">
+    <form action="/" class="form-container">
+        <h1>Chat</h1>
+        <ul id="chat"></ul>
+        <label for="msg"><b>name</b></label>
+        <input id="name" placeholder="Type message.." name="name" required></input>
+        <br>
+        <label for="msg"><b>Message</b></label>
+        <input id="message" placeholder="Type message.." name="msg" required></input>
+
+        <button type="submit" class="btn">Send</button>
+        <button type="button" class="btn cancel" onclick="closeForm()">Close</button>
+    </form>
+</div>
+
+<script>
+    function openForm() {
+        document.getElementById("myForm").style.display = "block";
+    }
+
+    function closeForm() {
+        document.getElementById("myForm").style.display = "none";
+    }
+</script>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+    const socket = io();
+    $('form').submit(function(){
+        socket.emit("message",{"mes":$("#message").val(),"name":$("#name").val()});
+        $("#message").val("");
+        $("#name").val("");
+        $("#name").css("visibility: hidden");
+        return false;
+    });
+    socket.on("server message",function(mes){
+        $("#chat").append($('<li>').text("name : " + mes.name));
+
+        $("#chat").append($('<li>').text("message : "+mes.mes));
+    });
+</script>
+</body>
+</html>
